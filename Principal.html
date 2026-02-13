@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Launcher</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d0d0d;
+            font-family: 'Roboto', sans-serif;
+            /* background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2670&q=80'); */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- BOTONES CONTAINER --- */
+        .buttons-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 9998;
+        }
+
+        /* --- BOTÓN PARA ABRIR --- */
+        .open-trigger {
+            background: rgba(15, 15, 20, 0.95);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .open-trigger:hover {
+            box-shadow: 0 0 25px #ffffff;
+            transform: scale(1.05);
+            background: rgba(25, 25, 35, 1);
+        }
+
+        /* --- MODAL CON FADE IN / FADE OUT --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: flex;
+            /* Siempre en flex para centrar */
+            justify-content: center;
+            align-items: center;
+
+            /* Estados iniciales para la animación */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Clase activa que dispara el Fade In */
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .phone-wrapper {
+            position: relative;
+            width: 450px;
+            aspect-ratio: 161 / 324;
+            /* Efecto opcional: que el celular suba un poco al aparecer */
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+        }
+
+        .modal-overlay.active .phone-wrapper {
+            transform: translateY(0);
+        }
+
+        .phone-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 2;
+            object-fit: contain;
+        }
+
+        .screen-content {
+            position: absolute;
+            top: 13%;
+            left: 14%;
+            right: 14%;
+            bottom: 14.5%;
+            background: #000;
+            border-radius: 40px;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .blitz-frame-wrapper {
+            position: relative;
+            /* Match the size of the GUI in styles.css (611px width, 620px height) plus a bit */
+            width: 615px;
+            height: 625px;
+            /* Optional animation */
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+
+        .modal-overlay.active .blitz-frame-wrapper {
+            transform: scale(1);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="buttons-container">
+        <button class="open-trigger" onclick="abrirModal('novaModal')">Press to open "NOVA" menu</button>
+        <button class="open-trigger" onclick="abrirModal('blitzModal')">Press to open "BLITZ" menu</button>
+    </div>
+
+    <!-- Modal NOVA -->
+    <div id="novaModal" class="modal-overlay" onclick="cerrarModal(event, 'novaModal')">
+        <div class="phone-wrapper">
+            <img src="https://i.ibb.co/1fTtv9JV/telefono.png" alt="Phone Frame" class="phone-frame">
+            <div class="screen-content">
+                <iframe src="https://edsordaz.github.io/NovaWeb/" title="Nova Command Centre"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal BLITZ -->
+    <div id="blitzModal" class="modal-overlay" onclick="cerrarModal(event, 'blitzModal')">
+        <div class="blitz-frame-wrapper">
+            <iframe src="Blitz.html" title="Blitz UI"></iframe>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add("active");
+                // Bloquear scroll de la página principal
+                document.body.style.overflow = "hidden";
+            }
+        }
+
+        function cerrarModal(event, modalId) {
+            // Cerramos si clickeas el fondo o si es una acción programada
+            if (event === 'force' || event.target.id === modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove("active");
+                    document.body.style.overflow = "auto";
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                // Cerrar cualquier modal activo
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove("active");
+                });
+                document.body.style.overflow = "auto";
+            }
+        });
+    </script>
+
+</body>
+
+</html>
